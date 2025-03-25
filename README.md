@@ -17,3 +17,11 @@ Install the required libraries using:
 ```bash
 pip install -r requirements.txt
 
+##  How to Use
+
+# Windows 
+- `Install Python`
+- `Run Setup.bat`
+# Linux
+```bash
+python3 main.py
