@@ -14,5 +14,8 @@
   - `colorama`
 
 ##  How to Use
-
-
+### Prerequisites
+- Ensure Python 3.x is installed on your system.
+- Install the required libraries using:
+  ```bash
+  pip install -r requirements.txt
