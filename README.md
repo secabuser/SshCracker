@@ -146,7 +146,3 @@ pip install -r requirements.txt
 - If you face any issues, verify that all libraries are installed by running:
   
   pip list
-  
-```
-
-You can now directly copy and paste this README.md file into your GitHub repository! Let me know if you need further adjustments. 😊
