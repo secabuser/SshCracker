@@ -1,6 +1,3 @@
-Sure! Here's the content for your `README.md` file, neatly formatted and ready for copy-paste:
-
-```markdown
 # SSH Cracker
 
 A Python-based tool for multi-threaded SSH testing, designed for efficiency and ease of use. This script allows testing multiple IPs, ports, usernames, and passwords, while featuring colorful outputs and detailed logging for successful, failed, and inaccessible credentials.
@@ -21,7 +18,7 @@ A Python-based tool for multi-threaded SSH testing, designed for efficiency and 
 Install dependencies using:
 ```bash
 pip install -r requirements.txt
-```
+
 
 ---
 
