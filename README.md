@@ -14,8 +14,36 @@
   - `colorama`
 
 ##  How to Use
-### Prerequisites
-- Ensure Python 3.x is installed on your system.
-- Install the required libraries using:
+### Linux
+#### Step 1: Install Prerequisites
+- Check if Python 3.x is installed:
   ```bash
-  pip install -r requirements.txt
+  python3 --version
+- If Python is not installed, install it using your package manager:
+  ```bash
+  sudo apt update
+  sudo apt install python3 python3-pip
+- Next, install the required libraries:
+  ```bash
+  pip3 install paramiko pyfiglet colorama
+
+### Windows
+#### Step 1: Install Python
+- Download and install Python 3.x from the official Python website : https://www.python.org/
+- During installation, make sure to check the box that says Add Python to PATH
+- Verify that Python is installed by opening Command Prompt (cmd) and typing:
+  ``bash
+  python --version
+You should see the installed Python version.
+
+#### Step 2: Install Required Libraries
+- Open Command Prompt (cmd)
+- Install the required libraries by running:
+  ```bash
+  pip install paramiko pyfiglet colorama
+- Confirm that the libraries are installed by typing:
+ ```bash
+  pip list
+
+  
+  
