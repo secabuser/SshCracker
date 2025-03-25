@@ -16,4 +16,4 @@
 Install the required libraries using:
 ```bash
 pip install -r requirements.txt
-‍```
+
