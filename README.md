@@ -1,6 +1,3 @@
-Here’s the corrected and polished version of your `README.md` file, formatted properly for GitHub:
-
-```markdown
 # SSH Cracker
 
 A Python-based tool for multi-threaded SSH cracking, designed for efficiency and ease of use. This script allows testing multiple IPs, ports, usernames, and passwords, while featuring colorful outputs and detailed logging for successful, failed, and inaccessible credentials.
