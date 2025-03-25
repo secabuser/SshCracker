@@ -42,9 +42,7 @@ pip install -r requirements.txt
 
 #### Step 2: Prepare Input Files
 - **IP File**: Create a text file containing IP addresses and ports in the format `<IP>:<Port>`. Example:
-  ```
-  192.168.1.1:22
-  192.168.1.2:22
+
 
 - **Username File**: Create a text file containing a list of usernames, one per line. Example:
   ```
