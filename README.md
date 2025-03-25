@@ -15,10 +15,6 @@ A Python-based tool for multi-threaded SSH testing, designed for efficiency and 
   - `pyfiglet`
   - `colorama`
 
-Install dependencies using:
-```bash
-pip install -r requirements.txt
-
 ---
 
 ## How to Use
