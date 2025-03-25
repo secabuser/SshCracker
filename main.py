@@ -162,7 +162,6 @@ def ssh_test_multithreaded():
                 ips_per_second = int(ips_checked / (elapsed_time + 1e-6))
                 os.system('cls' if os.name == 'nt' else 'clear')
                 print(banner)
-                print('            t.me/secabuser              ')
                 print(f"{g}Good: {good} | {r}Bad: {bad} | {y}All: {all_check}/{total_requests} | {w}IPs/s: {ips_per_second}", end='\r')
     finally:
         log_queue.put((None, None))
