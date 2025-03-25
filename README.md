@@ -149,8 +149,3 @@ pip install -r requirements.txt
   ```bash
   pip list
   ```
-
----
-
-This version is now clean, consistent, and ready for your GitHub repository. Let me know if you need further refinements! 😊
-```
