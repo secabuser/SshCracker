@@ -19,9 +19,9 @@ pip install -r requirements.txt
 
 ##  How to Use
 
-# Windows 
+Windows 
 - `Install Python`
 - `Run Setup.bat`
-# Linux
+Linux
 ```bash
 python3 main.py
