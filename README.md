@@ -1,6 +1,6 @@
 # SSH Cracker
 
-A Python-based tool for multi-threaded SSH cracking, designed for efficiency and ease of use. This script allows testing multiple IPs, ports, usernames, and passwords, while featuring colorful outputs and detailed logging for successful, failed, and inaccessible credentials.
+A Python-based tool for multi-threaded SSH cracking :]
 
 ![Screenshot of Tool](tool_screenshot.png)
 
