@@ -150,7 +150,6 @@ if __name__ == "__main__":
     """)))
 
     with suppress(KeyboardInterrupt):
-        os.system('cls' if os.name == 'nt' else 'clear')
         ip_file = input(Colors.red + "IP file (e.g., ips.txt): " + Colors.reset).strip()
         user_file = input(Colors.red + "Username file (e.g., users.txt): " + Colors.reset).strip()
         pass_file = input(Colors.red + "Password file (e.g., passwords.txt): " + Colors.reset).strip()
