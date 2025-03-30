@@ -11,12 +11,12 @@ A Python-based tool for multi-threaded SSH brute-forcing with an interactive and
 ---
 
 ## Features
-- **Multi-threaded Testing:** Efficiently tests multiple IPs concurrently with configurable thread limits.
-- **Interactive Console:** Prompts for input files and configurations with a clean and colorful interface.
-- **Detailed Logging:** Saves results into separate log files:
-  - Successful connections.
-  - Authentication errors.
-  - Inaccessible IPs or ports.
+- **Multi-threaded Testing
+- **Interactive Console**
+- **Detailed Logging**
+  - Fast
+  - 100% Accurate
+  - Check Access
 - **Dynamic Feedback:** Displays live progress including total attempts and performance metrics.
 
 ---
