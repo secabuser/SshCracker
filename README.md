@@ -2,7 +2,7 @@
 
 A Python-based tool for SSH Cracker :]
 
-![Screenshot of Tool](tool_screenshot.png)
+![Screenshot of Tool](screenshot.png)
 
 ---
 
