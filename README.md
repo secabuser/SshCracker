@@ -10,7 +10,6 @@ A Python-based tool for SSH Cracker :]
   - Fast
   - 100% Accurate
   - Check Access
-  - Best Log 
 
 ---
 
