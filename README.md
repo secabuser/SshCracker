@@ -11,13 +11,10 @@ A Python-based tool for multi-threaded SSH brute-forcing with an interactive and
 ---
 
 ## Features
-- **Multi-threaded Testing
-- **Interactive Console**
-- **Detailed Logging**
   - Fast
   - 100% Accurate
   - Check Access
-- **Dynamic Feedback:** Displays live progress including total attempts and performance metrics.
+  - Best Log 
 
 ---
 
