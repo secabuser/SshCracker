@@ -152,7 +152,3 @@ Open these files using Notepad or any text editor to view results.
    - The script clears the terminal after inputs are provided and reprints the banner for a clean interface.
 3. **Compatibility**:
    - Works on both Linux and Windows systems.
-
----
-
-This updated version matches your script’s functionality and aesthetics while providing a clear guide for usage. If you need further adjustments, let me know! 😊
