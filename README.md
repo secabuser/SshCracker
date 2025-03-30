@@ -1,10 +1,6 @@
-Here’s the updated documentation tailored to the final version of your SSH Cracker tool:
-
----
-
 # SSH Cracker
 
-A Python-based tool for multi-threaded SSH brute-forcing with an interactive and user-friendly interface. It simplifies the process with detailed logging and robust concurrency.
+A Python-based tool for SSH Cracker :]
 
 ![Screenshot of Tool](tool_screenshot.png)
 
