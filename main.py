@@ -140,32 +140,30 @@ def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 if __name__ == "__main__":
-
+    clear_console()
     print(Colorate.Diagonal(Colors.red_to_blue, Center.XCenter("""
-███████ ███████ ██   ██      ██████ ██████   █████   ██████ ██   ██ ███████ ██████  
-██      ██      ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
-███████ ███████ ███████     ██      ██████  ███████ ██      █████   █████   ██████  
-     ██      ██ ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
-███████ ███████ ██   ██      ██████ ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██ 
+ ▗▄▄▖ ▗▄▄▖▗▖ ▗▖     ▗▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▄▖ 
+▐▌   ▐▌   ▐▌ ▐▌    ▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▌ ▐▌
+ ▝▀▚▖ ▝▀▚▖▐▛▀▜▌    ▐▌   ▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▛▀▚▖
+▗▄▄▞▘▗▄▄▞▘▐▌ ▐▌    ▝▚▄▄▖▐▌ ▐▌▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌ ▐▌
 
-                                t.me/secabuser       
+                  t.me/secabuser       
     """)))
 
     with suppress(KeyboardInterrupt):
-        ip_file = input(Colors.red + "IP file (e.g., ips.txt): " + Colors.reset).strip()
-        user_file = input(Colors.red + "Username file (e.g., users.txt): " + Colors.reset).strip()
-        pass_file = input(Colors.red + "Password file (e.g., passwords.txt): " + Colors.reset).strip()
-        threads = int(input(Colors.red + "Number of threads: " + Colors.reset).strip())
+        ip_file = input("IP file  > ").strip()
+        user_file = input("Username > ").strip()
+        pass_file = input("Password > ").strip()
+        threads = int(input("Threads > ").strip())
 
         clear_console()
         print(Colorate.Diagonal(Colors.red_to_blue, Center.XCenter("""
-███████ ███████ ██   ██      ██████ ██████   █████   ██████ ██   ██ ███████ ██████  
-██      ██      ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
-███████ ███████ ███████     ██      ██████  ███████ ██      █████   █████   ██████  
-     ██      ██ ██   ██     ██      ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
-███████ ███████ ██   ██      ██████ ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██ 
+ ▗▄▄▖ ▗▄▄▖▗▖ ▗▖     ▗▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▄▖ 
+▐▌   ▐▌   ▐▌ ▐▌    ▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▌ ▐▌
+ ▝▀▚▖ ▝▀▚▖▐▛▀▜▌    ▐▌   ▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▛▀▚▖
+▗▄▄▞▘▗▄▄▞▘▐▌ ▐▌    ▝▚▄▄▖▐▌ ▐▌▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌ ▐▌
 
-                                t.me/secabuser                                                    
+                  t.me/secabuser                                                     
         """)))
 
         cracker = SSHCracker(ip_file, user_file, pass_file, threads)
