@@ -139,13 +139,3 @@ After completion, logs are generated in the following files:
 - `no-access.txt`
 
 Open these files using Notepad or any text editor to view results.
-
----
-
-### Additional Notes
-1. **Log Management**:
-   - Logs are cleared at the start of each execution to avoid duplication.
-2. **Terminal Optimization**:
-   - The script clears the terminal after inputs are provided and reprints the banner for a clean interface.
-3. **Compatibility**:
-   - Works on both Linux and Windows systems.
